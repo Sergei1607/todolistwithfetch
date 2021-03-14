@@ -1,14 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 export function List() {
 	const [todo, setTodo] = useState("");
 	const [todos, setTodos] = useState([]);
-	const [number, setNumber] = useState(0);
 	const [activeIndex, setActiveIndex] = useState(null);
-	const [notodo, setNotodo] = useState(
-		<li className="list-group-item">No todos, add a todo.</li>
-	);
-
+	const [notodo, setNotodo] = useState();
+	let numero = 0;
 	let activeIcon = { display: "block" };
 	let deactiveIcon = { display: "none" };
 
@@ -16,15 +13,45 @@ export function List() {
 		setActiveIndex(e);
 	};
 
-	function addtodo() {
-		if (todo == "") {
-			alert("¡Your todo is empty! Please add a valid todo.");
-		} else {
-			setTodos([...todos, todo]);
-			setTodo("");
-			setNumber(number + 1);
-			setNotodo();
-		}
+	useEffect(() => {
+		getApiData();
+	});
+
+	function putApiData() {
+		var myHeaders = new Headers();
+		myHeaders.append("Content-Type", "application/json");
+
+		var raw = JSON.stringify([...todos, { label: todo, done: false }]);
+
+		var requestOptions = {
+			method: "PUT",
+			headers: myHeaders,
+			body: raw,
+			redirect: "follow"
+		};
+
+		fetch(
+			"https://assets.breatheco.de/apis/fake/todos/user/Sergei1607",
+			requestOptions
+		)
+			.then(response => response.text())
+			.then(result => console.log(result))
+			.catch(error => console.log("error", error));
+	}
+
+	function getApiData() {
+		var requestOptions = {
+			method: "GET",
+			redirect: "follow"
+		};
+
+		fetch(
+			"https://assets.breatheco.de/apis/fake/todos/user/Sergei1607",
+			requestOptions
+		)
+			.then(response => response.json())
+			.then(result => setTodos(result))
+			.catch(error => console.log("error", error));
 	}
 
 	return (
@@ -41,7 +68,7 @@ export function List() {
 						<button
 							id="addtodo"
 							className="btn p-1"
-							onClick={addtodo}>
+							onClick={putApiData}>
 							<i className="fas fa-check-circle fa-2x"></i>
 						</button>
 					</div>
@@ -53,6 +80,7 @@ export function List() {
 						<ul className="list-group list-group-flush">
 							{notodo}
 							{todos.map((item, index) => {
+								numero++;
 								return (
 									<li
 										key={index}
@@ -60,7 +88,7 @@ export function List() {
 										onMouseEnter={() => handleover(index)}
 										onMouseLeave={() => setActiveIndex("")}
 										name={index}>
-										{item}
+										{item.label}
 										<i
 											style={
 												activeIndex === index
@@ -71,8 +99,7 @@ export function List() {
 											className="fas fa-times-circle fa-sm"
 											onClick={function() {
 												todos.splice(index, 1);
-												setNumber(number - 1);
-												if (number === 1) {
+												if (numero === 1) {
 													setNotodo(
 														<li className="list-group-item">
 															No tasks, add a task
@@ -85,7 +112,7 @@ export function List() {
 							})}
 							<li id="counter" className="list-group-item">
 								{" "}
-								{number} Items left.
+								{numero} Items left.
 							</li>
 						</ul>
 					</div>
