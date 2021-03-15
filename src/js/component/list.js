@@ -54,6 +54,43 @@ export function List() {
 			.catch(error => console.log("error", error));
 	}
 
+	function deleteall() {
+		var requestOptions = {
+			method: "DELETE",
+			redirect: "follow"
+		};
+
+		fetch(
+			"https://assets.breatheco.de/apis/fake/todos/user/Sergei1607",
+			requestOptions
+		)
+			.then(response => response.text())
+			.then(result => console.log(result))
+			.catch(error => console.log("error", error));
+	}
+
+	function createpost() {
+		var myHeaders = new Headers();
+		myHeaders.append("Content-Type", "application/json");
+
+		var raw = JSON.stringify([]);
+
+		var requestOptions = {
+			method: "POST",
+			headers: myHeaders,
+			body: raw,
+			redirect: "follow"
+		};
+
+		fetch(
+			"https://assets.breatheco.de/apis/fake/todos/user/Sergei1607",
+			requestOptions
+		)
+			.then(response => response.text())
+			.then(result => console.log(result))
+			.catch(error => console.log("error", error));
+	}
+
 	return (
 		<div id="main">
 			<div className="container d-flex justify-content-center">
@@ -118,6 +155,9 @@ export function List() {
 					</div>
 				</div>
 			</div>
+			<button id="deleteall" type="button" onClick={deleteall}>
+				Delete all
+			</button>
 		</div>
 	);
 }
