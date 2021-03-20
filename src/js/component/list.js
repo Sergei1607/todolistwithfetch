@@ -16,7 +16,11 @@ export function List() {
 	useEffect(() => {
 		postApi();
 		getApiData();
-	});
+	}, []);
+
+	useEffect(() => {
+		getApiData();
+	}, [todos]);
 
 	function postApi() {
 		var myHeaders = new Headers();
@@ -77,9 +81,16 @@ export function List() {
 			.catch(error => console.log("error", error));
 	}
 
-	function deleteall() {
+	function putApiData2() {
+		var myHeaders = new Headers();
+		myHeaders.append("Content-Type", "application/json");
+
+		var raw = JSON.stringify(todos);
+
 		var requestOptions = {
-			method: "DELETE",
+			method: "PUT",
+			headers: myHeaders,
+			body: raw,
 			redirect: "follow"
 		};
 
@@ -92,14 +103,15 @@ export function List() {
 			.catch(error => console.log("error", error));
 	}
 
-	function createpost() {
+	function putApiData3() {
+		numero = 0;
 		var myHeaders = new Headers();
 		myHeaders.append("Content-Type", "application/json");
 
-		var raw = JSON.stringify([]);
+		var raw = JSON.stringify([{ label: "sample task", done: false }]);
 
 		var requestOptions = {
-			method: "POST",
+			method: "PUT",
 			headers: myHeaders,
 			body: raw,
 			redirect: "follow"
@@ -159,6 +171,7 @@ export function List() {
 											className="fas fa-times-circle fa-sm"
 											onClick={function() {
 												todos.splice(index, 1);
+												putApiData2();
 												if (numero === 1) {
 													setNotodo(
 														<li className="list-group-item">
@@ -178,7 +191,12 @@ export function List() {
 					</div>
 				</div>
 			</div>
-			<button id="deleteall" type="button" onClick={deleteall}>
+			<button
+				id="deleteall"
+				type="button"
+				onClick={() => {
+					putApiData3();
+				}}>
 				Delete all
 			</button>
 		</div>
